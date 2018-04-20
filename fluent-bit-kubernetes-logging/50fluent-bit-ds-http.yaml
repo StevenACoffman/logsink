@@ -55,7 +55,7 @@ spec:
           limits:
             memory: "20Mi"
       - name: fluent-bit
-        image: edsiper/fluent-bit-0.13-next:0.17-5@sha256:b74a30e3ec7308006e6dbe00c45c159e06bad66f263c11cc62cdb0cf868547fd
+        image: edsiper/fluent-bit-0.13-next:0.17-6@sha256:0aceef3e6dd0c4072dbb890a3bc87b734bba9946deb0d5f04617668df990477d
         imagePullPolicy: Always
         ports:
         - containerPort: 2020
