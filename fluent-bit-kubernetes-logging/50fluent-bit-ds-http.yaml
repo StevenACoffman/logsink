@@ -24,22 +24,34 @@ spec:
       nodeSelector:
         kubernetes.io/role: node
       containers:
-      - name: dummy-logsink
-        image: docker.io/stevenacoffman/dummy-logsink@sha256:e8fa3862b87a415fc84daa23c85c695a54e95fe53192d0de239dc96322fb3eda
+      - name: go-s3-logsink
+        image: docker.io/stevenacoffman/go-s3-logsink@sha256:e8fa3862b87a415fc84daa23c85c695a54e95fe53192d0de239dc96322fb3eda
         env:
-        - name: DELAY
-          value: "0"
+        - name: AWS_REGION
+          value: "us-east-1"
+        - name: AWS_DEFAULT_REGION
+          value: "us-east-1"
+        - name: S3_BUCKET
+          value: "kafka-logs"
+        - name: S3_PREFIX
+          value: "k8s"
+        - name: S3_TRAILING_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              name: seq-base
+              key: sequoia.environment
         - name: PORT
           value: "4000"
         ports:
         - containerPort: 4000
         resources:
           requests:
-            cpu: 0.2
-            memory: "10Mi"
+            cpu: 0.1
+            memory: "15Mi"
           limits:
-            memory: "20Mi"
-      - name: other-dummy-logsink
+            cpu: 0.5
+            memory: "45Mi"
+      - name: dummy-logsink
         image: docker.io/stevenacoffman/dummy-logsink@sha256:e8fa3862b87a415fc84daa23c85c695a54e95fe53192d0de239dc96322fb3eda
         env:
         - name: DELAY
@@ -50,12 +62,13 @@ spec:
         - containerPort: 3000
         resources:
           requests:
-            cpu: 0.2
-            memory: "10Mi"
+            cpu: 0.1
+            memory: "30Mi"
           limits:
-            memory: "20Mi"
+            cpu: 0.2
+            memory: "60Mi"
       - name: fluent-bit
-        image: edsiper/fluent-bit-0.13-next:0.18
+        image: fluent/fluent-bit-0.13-dev:0.18
         imagePullPolicy: Always
         ports:
         - containerPort: 2020
@@ -70,10 +83,10 @@ spec:
         resources:
           requests:
             cpu: 5m
-            memory: 50Mi
+            memory: 10Mi
           limits:
             cpu: 50m
-            memory: 260Mi
+            memory: 60Mi
         volumeMounts:
         - name: varlog
           mountPath: /var/log
